@@ -1,0 +1,144 @@
+/* Custom styles for Thyroid Report Generator */
+
+.thyroid-diagram {
+    position: relative;
+    width: 300px;
+    height: 200px;
+    background-color: #e0f7fa; /* Use Tailwind bg-cyan-50 equivalent if needed */
+    border-radius: 50px 50px 0 0;
+}
+.thyroid-diagram::before {
+    content: '';
+    position: absolute;
+    width: 60px;
+    height: 20px;
+    background-color: #e0f7fa; /* Use Tailwind bg-cyan-50 equivalent if needed */
+    bottom: -20px;
+    left: 120px;
+}
+.thyroid-lobe {
+    position: absolute;
+    width: 100px;
+    height: 150px;
+    background-color: #b2ebf2; /* Use Tailwind bg-cyan-100 equivalent if needed */
+    border-radius: 50px;
+}
+.left-lobe {
+    left: 30px;
+    top: 25px;
+}
+.right-lobe {
+    right: 30px;
+    top: 25px;
+}
+.isthmus {
+    position: absolute;
+    width: 60px;
+    height: 20px;
+    background-color: #b2ebf2; /* Use Tailwind bg-cyan-100 equivalent if needed */
+    bottom: 0;
+    left: 120px;
+}
+.nodule-marker {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: #ff5722; /* Default color, will be overridden by JS */
+    border-radius: 50%;
+    transform: translate(-6px, -6px);
+    cursor: pointer;
+    border: 1px solid rgba(0,0,0,0.2); /* Slight border for visibility */
+}
+.nodule-marker.selected {
+    border: 2px solid #000; /* Use Tailwind border-black */
+    box-shadow: 0 0 0 2px white; /* Use Tailwind ring-2 ring-white */
+}
+/* TI-RADS specific colors for markers - applied by JS */
+.nodule-marker.tr1 { background-color: #4CAF50; } /* Tailwind bg-tr1 */
+.nodule-marker.tr2 { background-color: #8BC34A; } /* Tailwind bg-tr2 */
+.nodule-marker.tr3 { background-color: #FFC107; } /* Tailwind bg-tr3 */
+.nodule-marker.tr4 { background-color: #FF9800; } /* Tailwind bg-tr4 */
+.nodule-marker.tr5 { background-color: #F44336; } /* Tailwind bg-tr5 */
+
+.tirads-indicator {
+    width: 100%;
+    height: 20px;
+    /* Gradient using Tailwind configured colors */
+    background: linear-gradient(to right, var(--tw-color-tr1, #4CAF50), var(--tw-color-tr2, #8BC34A), var(--tw-color-tr3, #FFC107), var(--tw-color-tr4, #FF9800), var(--tw-color-tr5, #F44336));
+    position: relative;
+    border-radius: 4px; /* Optional: rounded corners */
+}
+.tirads-pointer {
+    position: absolute;
+    top: -5px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #333; /* Tailwind text-gray-700 or black */
+    transform: translateX(-10px);
+    transition: left 0.3s ease; /* Smooth transition */
+}
+/* Dark mode specific pointer color */
+.dark .tirads-pointer {
+    border-top-color: #ccc; /* Lighter color for dark mode */
+}
+
+/* Print styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    body {
+        background-color: white !important;
+        color: black !important;
+        /* Reset Tailwind dark mode overrides for printing */
+        --tw-bg-opacity: 1 !important;
+        --tw-text-opacity: 1 !important;
+    }
+    /* Ensure dark mode styles are reverted for print */
+    .dark body, .dark div, .dark input, .dark select, .dark textarea, .dark button, .dark span, .dark p, .dark h1, .dark h2, .dark h3, .dark h4 {
+        background-color: white !important;
+        color: black !important;
+        border-color: #e5e7eb !important; /* Tailwind gray-200 */
+    }
+    .dark .bg-gray-800, .dark .bg-gray-700, .dark .bg-gray-900 {
+        background-color: white !important;
+    }
+    .dark .text-gray-100 {
+        color: black !important;
+    }
+    .dark .border-gray-600 {
+         border-color: #e5e7eb !important; /* Tailwind gray-200 */
+    }
+    .dark .bg-gray-100 {
+         background-color: #f9fafb !important; /* Tailwind gray-50 */
+    }
+    /* Adjust preview for printing */
+     #reportPreview {
+        height: auto;
+        overflow: visible;
+        border: none;
+        padding: 0;
+        background-color: white !important;
+     }
+}
+
+/* Custom scrollbar (Optional but nice) */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Tailwind bg-gray-100 */
+}
+::-webkit-scrollbar-thumb {
+    background: #888; /* Tailwind bg-gray-500 */
+    border-radius: 4px;
+}
+/* Custom scrollbar for dark mode */
+.dark ::-webkit-scrollbar-track {
+    background: #374151; /* Tailwind bg-gray-700 */
+}
+.dark ::-webkit-scrollbar-thumb {
+    background: #6b7280; /* Tailwind bg-gray-500 */
+}

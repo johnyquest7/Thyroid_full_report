@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thyroid Ultrasound Report Generator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Link to your custom CSS file -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        tr1: '#4CAF50',
+                        tr2: '#8BC34A',
+                        tr3: '#FFC107',
+                        tr4: '#FF9800',
+                        tr5: '#F44336',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-blue-600 dark:text-blue-400">Thyroid Ultrasound Report</h1>
+            <div class="flex items-center space-x-4">
+                <button id="darkModeToggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700">
+                    <i class="fas fa-moon dark:hidden"></i>
+                    <i class="fas fa-sun hidden dark:inline"></i>
+                </button>
+                <button id="saveBtn" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                    <i class="fas fa-save mr-2"></i>Save
+                </button>
+                <button id="printBtn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 no-print">
+                    <i class="fas fa-file-pdf mr-2"></i>Export PDF
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column - Patient Info and Thyroid Measurements -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Patient Information -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                    <h2 class="text-xl font-semibold mb-4 border-b pb-2">Patient Information</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Patient Name</label>
+                            <input type="text" class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Date of Birth</label>
+                            <input type="date" class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">MRN</label>
+                            <input type="text" class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Exam Date</label>
+                            <input type="date" class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" value="">
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium mb-1">Prior Exam Comparison</label>
+                        <select class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600">
+                            <option value="">None available</option>
+                            <option value="1month">1 month prior</option>
+                            <option value="3month">3 months prior</option>
+                            <option value="6month">6 months prior</option>
+                            <option value="1year">1 year prior</option>
+                            <option value="other">Other (specify in findings)</option>
+                        </select>
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium mb-1">Clinical Indication</label>
+                        <select class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600">
+                            <option value="">Select indication...</option>
+                            <option value="palpable_nodule">Palpable nodule</option>
+                            <option value="incidental_nodule">Incidental nodule on imaging</option>
+                            <option value="goiter">Goiter/thyroid enlargement</option>
+                            <option value="hyperthyroidism">Hyperthyroidism evaluation</option>
+                            <option value="hypothyroidism">Hypothyroidism evaluation</option>
+                            <option value="thyroiditis">Thyroiditis evaluation</option>
+                            <option value="followup">Follow-up of known nodule</option>
+                            <option value="cancer_surveillance">Cancer surveillance</option>
+                            <option value="other">Other (specify in findings)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Thyroid Measurements -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                    <h2 class="text-xl font-semibold mb-4 border-b pb-2">Thyroid Measurements</h2>
+
+                    <div class="thyroid-diagram mx-auto mb-6 relative">
+                        <div class="left-lobe thyroid-lobe"></div>
+                        <div class="right-lobe thyroid-lobe"></div>
+                        <div class="isthmus"></div>
+                        <!-- Nodule markers will be added here dynamically by script.js -->
+                    </div>
+
+                    <h3 class="font-medium mb-2">Right Lobe</h3>
+                    <div class="grid grid-cols-3 gap-2 mb-4">
+                        <div>
+                            <label class="block text-xs font-medium mb-1">Length (cm)</label>
+                            <input type="number" step="0.1" min="0" class="w-full px-2 py-1 border rounded dark:bg-gray-700 dark:border-gray-600 measurement" data-side="right" data-dim="length">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium mb-1">Width (cm)</label>
+                            <input type="number" step="0.1" min="0" class="w-full px-2 py-1 border rounded dark:bg-gray-700 dark:border-gray-600 measurement" data-side="right" data-dim="width">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium mb-1">Height (cm)</label>
+                            <input type="number" step="0.1" min="0" class="w-full px-2 py-1 border rounded dark:bg-gray-700 dark:border-gray-600 measurement" data-side="right" data-dim="height">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-xs font-medium mb-1">Volume (ml)</label>
+                        <input type="text" class="w-full px-2 py-1 border rounded dark:bg-gray-700 dark:border-gray-600 bg-gray-100 dark:bg-gray-700" id="rightVolume" readonly>
+                    </div>
+
+                    <h3 class="font-medium mb-2">Left Lobe</h3>
+                    <div class="grid grid-cols-3 gap-2 mb-4">
+                        <div>
+                            <label class="block text-xs font-medium mb-1">Length (cm)</label>
+                            <input type="number" step="0.1" min="0" class="w-full px-2 py-1 border rounded dark:bg-gray-700 dark:border-gray-600 measurement" data-side="left" data-dim="length">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium mb-1">Width (cm)</label>
+                            <input type="number" step="0.1" min="0" class="w-full px-2 py-1 border rounded dark:bg-gray-700 dark:border-gray-600 measurement" data-side="left" data-dim="width">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium mb-1">Height (cm)</label>
+                            <input type="number" step="0.1" min="0" class="w-full px-2 py-1 border rounded dark:bg-gray-700 dark:border-gray-600 measurement" data-side="left" data-dim="height">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-xs font-medium mb-1">Volume (ml)</label>
+                        <input type="text" class="w-full px-2 py-1 border rounded dark:bg-gray-700 dark:border-gray-600 bg-gray-100 dark:bg-gray-700" id="leftVolume" readonly>
+                    </div>
+
+                    <h3 class="font-medium mb-2">Isthmus</h3>
+                    <div class="mb-4">
+                        <label class="block text-xs font-medium mb-1">Thickness (mm)</label>
+                        <input type="number" step="0.1" min="0" class="w-full px-2 py-1 border rounded dark:bg-gray-700 dark:border-gray-600">
+                    </div>
+
+                    <h3 class="font-medium mb-2">Parenchyma</h3>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-xs font-medium mb-1">Echogenicity</label>
+                            <select class="w-full px-2 py-1 border rounded dark:bg-gray-700 dark:border-gray-600">
+                                <option value="normal">Normal</option>
+                                <option value="heterogeneous">Diffusely heterogeneous</option>
+                                <option value="hypoechoic">Diffusely hypoechoic</option>
+                                <option value="hyperechoic">Diffusely hyperechoic</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium mb-1">Vascularity</label>
+                            <select class="w-full px-2 py-1 border rounded dark:bg-gray-700 dark:border-gray-600">
+                                <option value="normal">Normal</option>
+                                <option value="increased">Increased</option>
+                                <option value="decreased">Decreased</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lymph Node Assessment -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                    <h2 class="text-xl font-semibold mb-4 border-b pb-2">Lymph Node Assessment</h2>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-2">Status</label>
+                        <div class="flex space-x-4">
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="lymph_status" value="normal" class="form-radio" checked>
+                                <span class="ml-2">Normal</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="lymph_status" value="abnormal" class="form-radio">
+                                <span class="ml-2">Abnormal</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="abnormalLymphFields" class="hidden space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Location</label>
+                            <select class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" multiple>
+                                <option value="I">Level I</option>
+                                <option value="II">Level II</option>
+                                <option value="III">Level III</option>
+                                <option value="IV">Level IV</option>
+                                <option value="V">Level V</option>
+                                <option value="VI">Level VI</option>
+                                <option value="VII">Level VII</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Characteristics</label>
+                            <div class="space-y-2">
+                                <div>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" class="form-checkbox">
+                                        <span class="ml-2">Round shape (L/T > 0.5)</span>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" class="form-checkbox">
+                                        <span class="ml-2">Loss of fatty hilum</span>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" class="form-checkbox">
+                                        <span class="ml-2">Peripheral vascularity</span>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" class="form-checkbox">
+                                        <span class="ml-2">Cystic changes</span>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" class="form-checkbox">
+                                        <span class="ml-2">Calcifications</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Largest Node Size (mm)</label>
+                            <input type="number" step="0.1" min="0" class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Middle Column - Nodule Documentation -->
+            <div class="lg:col-span-1 space-y-6">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold">Nodule Documentation</h2>
+                        <button id="addNoduleBtn" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
+                            <i class="fas fa-plus mr-1"></i>Add Nodule
+                        </button>
+                    </div>
+
+                    <div id="noduleList" class="space-y-4">
+                        <!-- Nodules will be added here dynamically by script.js -->
+                        <div class="text-center py-4 text-gray-500" id="noNodulesMessage">
+                            No nodules added yet. Click "Add Nodule" to begin.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Findings -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                    <h2 class="text-xl font-semibold mb-4">Additional Findings</h2>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-1">Quick Select</label>
+                        <div class="flex flex-wrap gap-2">
+                            <button class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded text-sm quick-finding" data-text="No evidence of thyroiditis.">No thyroiditis</button>
+                            <button class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded text-sm quick-finding" data-text="Mild heterogeneous echotexture may suggest chronic thyroiditis.">Chronic thyroiditis</button>
+                            <button class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded text-sm quick-finding" data-text="Post-surgical changes noted.">Post-surgical</button>
+                            <button class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded text-sm quick-finding" data-text="No suspicious cervical lymphadenopathy.">Normal lymph nodes</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Findings</label>
+                        <textarea class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" rows="4" placeholder="Describe any additional findings..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - TI-RADS and Impression -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- TI-RADS Calculator -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                    <h2 class="text-xl font-semibold mb-4">ACR TI-RADS Calculator</h2>
+
+                    <div id="tiradsSection" class="hidden">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-1">Selected Nodule</label>
+                            <div class="px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600 bg-gray-100 dark:bg-gray-700" id="selectedNoduleName">No nodule selected</div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Composition</label>
+                                <select class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600 tirads-option" data-points="0">
+                                    <option value="cystic" data-points="0">Cystic or almost completely cystic (0 points)</option>
+                                    <option value="spongiform" data-points="0">Spongiform (0 points)</option>
+                                    <option value="mixed" data-points="1">Mixed cystic and solid (1 point)</option>
+                                    <option value="solid" data-points="2">Solid or almost completely solid (2 points)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Echogenicity</label>
+                                <select class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600 tirads-option" data-points="0">
+                                    <option value="anechoic" data-points="0">Anechoic (0 points)</option>
+                                    <option value="hyperechoic" data-points="1">Hyperechoic or isoechoic (1 point)</option>
+                                    <option value="hypoechoic" data-points="2">Hypoechoic (2 points)</option>
+                                    <option value="very_hypoechoic" data-points="3">Very hypoechoic (3 points)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Shape</label>
+                                <select class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600 tirads-option" data-points="0">
+                                    <option value="wider" data-points="0">Wider-than-tall (0 points)</option>
+                                    <option value="taller" data-points="3">Taller-than-wide (3 points)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Margin</label>
+                                <select class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600 tirads-option" data-points="0">
+                                    <option value="smooth" data-points="0">Smooth (0 points)</option>
+                                    <option value="ill_defined" data-points="0">Ill-defined (0 points)</option>
+                                    <option value="lobulated" data-points="2">Lobulated or irregular (2 points)</option>
+                                    <option value="extrathyroidal" data-points="3">Extra-thyroidal extension (3 points)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Echogenic Foci</label>
+                                <div class="space-y-2">
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" class="form-checkbox tirads-option" data-points="0" data-group="echogenic_foci" value="none">
+                                        <span class="ml-2">None (0 points)</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" class="form-checkbox tirads-option" data-points="1" data-group="echogenic_foci" value="macrocalcifications">
+                                        <span class="ml-2">Macrocalcifications (1 point)</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" class="form-checkbox tirads-option" data-points="1" data-group="echogenic_foci" value="peripheral_calcifications">
+                                        <span class="ml-2">Peripheral calcifications (1 point)</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" class="form-checkbox tirads-option" data-points="2" data-group="echogenic_foci" value="punctate_echogenic_foci">
+                                        <span class="ml-2">Punctate echogenic foci (2 points)</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6">
+                            <div class="flex justify-between mb-1">
+                                <span>TI-RADS Points: <span id="tiradsPoints">0</span></span>
+                                <span>Level: <span id="tiradsLevel">TR1</span></span>
+                            </div>
+                            <div class="tirads-indicator mb-2">
+                                <div class="tirads-pointer" style="left: 0%;"></div>
+                            </div>
+                            <div class="flex justify-between text-xs">
+                                <span class="text-tr1">TR1</span>
+                                <span class="text-tr2">TR2</span>
+                                <span class="text-tr3">TR3</span>
+                                <span class="text-tr4">TR4</span>
+                                <span class="text-tr5">TR5</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="noNoduleTirads" class="text-center py-4 text-gray-500">
+                        Select a nodule to calculate TI-RADS score
+                    </div>
+                </div>
+
+                <!-- Impression and Recommendations -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                    <h2 class="text-xl font-semibold mb-4">Impression & Recommendations</h2>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-1">Auto-generated Impression</label>
+                        <textarea class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600 bg-gray-100 dark:bg-gray-700" rows="3" id="autoImpression" readonly></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-1">Custom Impression</label>
+                        <textarea class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600" rows="3" placeholder="Modify the impression as needed..."></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Recommendations</label>
+                        <div class="px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600 bg-gray-100 dark:bg-gray-700" id="recommendations">
+                            No specific recommendations yet. Add nodules and calculate TI-RADS scores to generate recommendations.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Report Preview -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 no-print">
+                    <h2 class="text-xl font-semibold mb-4">Report Preview</h2>
+                    <div class="border rounded p-4 h-64 overflow-auto bg-gray-50 dark:bg-gray-700" id="reportPreview">
+                        <h3 class="font-bold">THYROID ULTRASOUND REPORT</h3>
+                        <div class="my-2 border-t"></div>
+
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p><strong>Patient:</strong> <span id="previewName">[Name]</span></p>
+                                <p><strong>DOB:</strong> <span id="previewDOB">[Date of Birth]</span></p>
+                            </div>
+                            <div>
+                                <p><strong>MRN:</strong> <span id="previewMRN">[MRN]</span></p>
+                                <p><strong>Exam Date:</strong> <span id="previewExamDate">[Exam Date]</span></p>
+                            </div>
+                        </div>
+
+                        <div class="my-2 border-t"></div>
+
+                        <h4 class="font-semibold mt-2">FINDINGS:</h4>
+                        <p id="previewFindings">[Findings will appear here]</p>
+
+                        <h4 class="font-semibold mt-2">IMPRESSION:</h4>
+                        <p id="previewImpression">[Impression will appear here]</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Link to your custom JavaScript file -->
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,57 +1,64 @@
 /* Custom styles for Thyroid Report Generator */
-
 .thyroid-diagram {
     position: relative;
-    width: 300px; /* Maintain overall container size for JS compatibility */
+    width: 300px; /* Keep container size consistent for JS */
     height: 200px;
-    background-color: #e0f7fa; /* Light blue background */
-    border-radius: 45% 45% 30px 30px / 50% 50% 20px 20px; /* Curved top, slight curve bottom */
-    margin-left: auto; /* Keep centered via parent class */
-    margin-right: auto; /* Keep centered via parent class */
-    overflow: hidden; /* Important to clip parts extending below */
+    margin-left: auto; /* Centering */
+    margin-right: auto; /* Centering */
+    /* Optional: background for the container area if needed */
+    /* background-color: #f8f9fa; */
+    overflow: visible; /* Allow parts to visually overflow if needed for shape */
 }
 
-/* We don't need the ::before pseudo-element anymore */
+/* Hide the old pseudo-element if it exists */
 .thyroid-diagram::before {
     display: none;
 }
 
 .isthmus {
     position: absolute;
-    width: 80px; /* Wider isthmus */
-    height: 50px; /* Taller, extends upwards */
-    background-color: #b2ebf2; /* Same color as lobes */
-    bottom: 0px; /* Position at the bottom */
-    left: 50%; /* Center horizontally */
-    transform: translateX(-50%); /* Precise centering */
-    border-radius: 25px 25px 0 0 / 20px 20px 0 0; /* Rounded top edge */
-    z-index: 1; /* Position behind lobes */
+    width: 75px;  /* Width of the connecting part */
+    height: 45px; /* How tall the isthmus is */
+    background-color: #b2ebf2; /* Fill color */
+    bottom: 25px; /* Position from bottom of container */
+    left: 50%;
+    transform: translateX(-50%);
+    /* Rounded top, slight curve bottom to blend */
+    border-radius: 50% 50% 15px 15px / 60% 60% 20px 20px;
+    z-index: 1; /* Behind lobes */
 }
 
 .thyroid-lobe {
     position: absolute;
-    width: 135px; /* Wider lobes */
-    height: 185px; /* Taller lobes, extending below bottom visually */
-    background-color: #b2ebf2; /* Slightly darker cyan */
-    /* Complex radius: top-left, top-right, bottom-right, bottom-left */
-    /* Format: horizontal radii / vertical radii */
-    border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%; /* Creates a more organic lobe shape */
-    bottom: -5px; /* Position slightly overlapping bottom, will be clipped by parent */
-    z-index: 2; /* Position lobes above isthmus */
+    width: 130px; /* Lobe width */
+    height: 175px; /* Lobe height */
+    background-color: #b2ebf2; /* Fill color */
+    bottom: 10px; /* Position lobes slightly lower */
+    z-index: 2; /* Lobes overlap isthmus */
+    /* Complex border-radius for organic shape: */
+    /* top-left top-right bottom-right bottom-left / vertical counterparts */
+    /* This creates tall rounded tops and more complex lower curves */
+    border-radius: 50% 50% 40% 40% / 65% 65% 35% 35%;
 }
 
 .left-lobe {
-    left: 15px; /* Adjusted position */
-    /* Optional: slight rotation for asymmetry */
-    /* transform: rotate(-3deg); */
+    /* Position left lobe, overlapping isthmus slightly */
+    left: 28px;
+    /* Rotate slightly for asymmetry */
+    /* transform: rotate(-2deg); */
 }
 
 .right-lobe {
-    right: 15px; /* Adjusted position */
-    /* Optional: slight rotation for asymmetry */
-    /* transform: rotate(3deg); */
+    /* Position right lobe, overlapping isthmus slightly */
+    right: 28px;
+    /* Rotate slightly for asymmetry */
+    /* transform: rotate(2deg); */
 }
+/* === END: Insert this new block === */
+
+/* Keep existing .nodule-marker styles below this point */
 .nodule-marker {
+    /* ... existing nodule styles ... */
     position: absolute;
     width: 12px;
     height: 12px;

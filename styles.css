@@ -2,42 +2,54 @@
 
 .thyroid-diagram {
     position: relative;
-    width: 300px;
+    width: 300px; /* Maintain overall container size for JS compatibility */
     height: 200px;
-    background-color: #e0f7fa; /* Use Tailwind bg-cyan-50 equivalent if needed */
-    border-radius: 50px 50px 0 0;
+    background-color: #e0f7fa; /* Light blue background */
+    border-radius: 45% 45% 30px 30px / 50% 50% 20px 20px; /* Curved top, slight curve bottom */
+    margin-left: auto; /* Keep centered via parent class */
+    margin-right: auto; /* Keep centered via parent class */
+    overflow: hidden; /* Important to clip parts extending below */
 }
+
+/* We don't need the ::before pseudo-element anymore */
 .thyroid-diagram::before {
-    content: '';
-    position: absolute;
-    width: 60px;
-    height: 20px;
-    background-color: #e0f7fa; /* Use Tailwind bg-cyan-50 equivalent if needed */
-    bottom: -20px;
-    left: 120px;
+    display: none;
 }
-.thyroid-lobe {
-    position: absolute;
-    width: 100px;
-    height: 150px;
-    background-color: #b2ebf2; /* Use Tailwind bg-cyan-100 equivalent if needed */
-    border-radius: 50px;
-}
-.left-lobe {
-    left: 30px;
-    top: 25px;
-}
-.right-lobe {
-    right: 30px;
-    top: 25px;
-}
+
 .isthmus {
     position: absolute;
-    width: 60px;
-    height: 20px;
-    background-color: #b2ebf2; /* Use Tailwind bg-cyan-100 equivalent if needed */
-    bottom: 0;
-    left: 120px;
+    width: 80px; /* Wider isthmus */
+    height: 50px; /* Taller, extends upwards */
+    background-color: #b2ebf2; /* Same color as lobes */
+    bottom: 0px; /* Position at the bottom */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Precise centering */
+    border-radius: 25px 25px 0 0 / 20px 20px 0 0; /* Rounded top edge */
+    z-index: 1; /* Position behind lobes */
+}
+
+.thyroid-lobe {
+    position: absolute;
+    width: 135px; /* Wider lobes */
+    height: 185px; /* Taller lobes, extending below bottom visually */
+    background-color: #b2ebf2; /* Slightly darker cyan */
+    /* Complex radius: top-left, top-right, bottom-right, bottom-left */
+    /* Format: horizontal radii / vertical radii */
+    border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%; /* Creates a more organic lobe shape */
+    bottom: -5px; /* Position slightly overlapping bottom, will be clipped by parent */
+    z-index: 2; /* Position lobes above isthmus */
+}
+
+.left-lobe {
+    left: 15px; /* Adjusted position */
+    /* Optional: slight rotation for asymmetry */
+    /* transform: rotate(-3deg); */
+}
+
+.right-lobe {
+    right: 15px; /* Adjusted position */
+    /* Optional: slight rotation for asymmetry */
+    /* transform: rotate(3deg); */
 }
 .nodule-marker {
     position: absolute;
